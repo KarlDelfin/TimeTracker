@@ -80,3 +80,4 @@ C:\Users\Admin\Desktop\TimeTracker\TimeTracker.Api\TimeTracker.Api\obj\Debug\net
 C:\Users\Admin\Desktop\TimeTracker\TimeTracker.Api\TimeTracker.Api\obj\Debug\net6.0\TimeTracker.Api.pdb
 C:\Users\Admin\Desktop\TimeTracker\TimeTracker.Api\TimeTracker.Api\obj\Debug\net6.0\TimeTracker.Api.genruntimeconfig.cache
 C:\Users\Admin\Desktop\TimeTracker\TimeTracker.Api\TimeTracker.Api\obj\Debug\net6.0\ref\TimeTracker.Api.dll
+C:\Users\Admin\Desktop\TimeTracker\TimeTracker.Api\TimeTracker.Api\obj\Debug\net6.0\TimeTracker.Api.sourcelink.json

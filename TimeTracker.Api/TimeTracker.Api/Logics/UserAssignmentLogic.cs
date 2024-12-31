@@ -7,7 +7,9 @@ using TimeTracker.Api.Models;
 using TimeTracker.Api.Services;
 using BC = BCrypt.Net.BCrypt;
 using ImageSharpImage = SixLabors.ImageSharp.Image;
-namespace Calendar.Api.Logics
+using System.Drawing.Imaging;
+using System.Drawing;
+namespace TimeTracker.Api.Logics
 {
     public class UserAssignmentLogic
     {
@@ -23,7 +25,7 @@ namespace Calendar.Api.Logics
 
         public async Task<UserAssignmentDTO_GET> LoginUser(UserAssignmentDTO_LOGIN dto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x=>x.Email == dto.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == dto.Email);
             if (user != null && BC.Verify(dto.Password, user.Password))
             {
                 var data = await (from a in _context.UserAssignments
@@ -98,6 +100,67 @@ namespace Calendar.Api.Logics
                 return "success";
             }
             return "error";
+        }
+
+        public async Task<bool> UpdateUser(Guid userId, UserAssignmentDTO_POST dto)
+        {
+        
+            int success = 0;
+            string profileName = "";
+
+            var data = _context.Users.FirstOrDefault(x => x.UserId == userId);
+
+            // UPDATE IMAGE LOGIC
+            if (dto.Image != null && dto.Image.Length > 0)
+            {
+                if (File.Exists(_filePath.UserImagePath(data.Image)))
+                {
+                    File.Delete(_filePath.UserImagePath(data.Image));
+                }
+
+                profileName = userId.ToString() + Path.GetExtension(dto.Image.FileName);
+                data.Image = profileName;
+                var profilePath = _filePath.UserImagePath("");
+                string profileFilePath = Path.Combine(profilePath, profileName);
+
+                using (var image = System.Drawing.Image.FromStream(dto.Image.OpenReadStream()))
+                using (var resizedImage = new Bitmap(200, 200))
+                using (var graphics = Graphics.FromImage(resizedImage))
+                {
+                    graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    graphics.DrawImage(image, 0, 0, 200, 200);
+                    resizedImage.Save(profileFilePath, ImageFormat.Png);
+                }
+            }
+
+            // PASSWORD
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+            {
+                data.Password = BC.HashPassword(dto.Password, BC.GenerateSalt());
+            }
+
+            data.FirstName = dto.FirstName;
+            data.LastName = dto.LastName;
+
+            _context.Users.Update(data);
+            success = _context.SaveChanges();
+
+            return success > 0;
+        }
+
+        public async Task<bool> DisableUser(Guid userAssignmentId)
+        {
+            int success = 0;
+
+            var data = await _context.UserAssignments.FirstOrDefaultAsync(x=>x.UserAssignmentId == userAssignmentId);
+
+            data.IsDisabled = true;
+
+            _context.UserAssignments.Update(data);
+            success = await _context.SaveChangesAsync();
+
+            return success > 0;
+
         }
     }
 }

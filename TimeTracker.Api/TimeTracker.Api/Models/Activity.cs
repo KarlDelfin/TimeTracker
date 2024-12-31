@@ -20,6 +20,7 @@ namespace TimeTracker.Api.Models
         [StringLength(50)]
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
+        public int EstimatedTime { get; set; }
         public bool IsAssigned { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime DateTimeCreated { get; set; }

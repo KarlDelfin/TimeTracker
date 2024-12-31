@@ -1,12 +1,54 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\Admin\\Desktop\\TimeTracker\\TimeTracker.Api\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0012C540-5EBA-4FDA-92D5-FED0FF1A6BE3}|TimeTracker.Api\\TimeTracker.Api.csproj|c:\\users\\admin\\desktop\\timetracker\\timetracker.api\\timetracker.api\\logics\\statusloglogic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0012C540-5EBA-4FDA-92D5-FED0FF1A6BE3}|TimeTracker.Api\\TimeTracker.Api.csproj|solutionrelative:timetracker.api\\logics\\statusloglogic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0012C540-5EBA-4FDA-92D5-FED0FF1A6BE3}|TimeTracker.Api\\TimeTracker.Api.csproj|c:\\users\\admin\\desktop\\timetracker\\timetracker.api\\timetracker.api\\controllers\\statuslogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0012C540-5EBA-4FDA-92D5-FED0FF1A6BE3}|TimeTracker.Api\\TimeTracker.Api.csproj|solutionrelative:timetracker.api\\controllers\\statuslogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "StatusLogController.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\TimeTracker\\TimeTracker.Api\\TimeTracker.Api\\Controllers\\StatusLogController.cs",
+              "RelativeDocumentMoniker": "TimeTracker.Api\\Controllers\\StatusLogController.cs",
+              "ToolTip": "C:\\Users\\Admin\\Desktop\\TimeTracker\\TimeTracker.Api\\TimeTracker.Api\\Controllers\\StatusLogController.cs",
+              "RelativeToolTip": "TimeTracker.Api\\Controllers\\StatusLogController.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAYwCkAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-31T08:31:52.631Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "StatusLogLogic.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\Desktop\\TimeTracker\\TimeTracker.Api\\TimeTracker.Api\\Logics\\StatusLogLogic.cs",
+              "RelativeDocumentMoniker": "TimeTracker.Api\\Logics\\StatusLogLogic.cs",
+              "ToolTip": "C:\\Users\\Admin\\Desktop\\TimeTracker\\TimeTracker.Api\\TimeTracker.Api\\Logics\\StatusLogLogic.cs",
+              "RelativeToolTip": "TimeTracker.Api\\Logics\\StatusLogLogic.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAYwCkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-31T08:31:45.124Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

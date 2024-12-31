@@ -1,6 +1,6 @@
-﻿using Calendar.Api.Logics;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TimeTracker.Api.DTO;
+using TimeTracker.Api.Logics;
 
 namespace Calendar.Api.Controllers
 {
@@ -51,6 +51,42 @@ namespace Calendar.Api.Controllers
                 }
             }
             catch(Exception ex)
+            {
+                return BadRequest(ex.Message + ex.StackTrace);
+            }
+        }
+
+        [HttpPut("User/{userId}")]
+        public async Task<IActionResult> UpdateUser(Guid userId, [FromForm] UserAssignmentDTO_POST dto)
+        {
+            try
+            {
+                bool ok = await _logic.UpdateUser(userId, dto);
+                if (ok)
+                {
+                    return Ok();
+                }
+                return BadRequest("Failed to register account");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message + ex.StackTrace);
+            }
+        }
+
+        [HttpDelete("{userAssignmentId}")]
+        public async Task<IActionResult> DisableUser(Guid userAssignmentId)
+        {
+            try
+            {
+                bool ok = await _logic.DisableUser(userAssignmentId);
+                if (ok)
+                {
+                    return Ok();
+                }
+                return BadRequest("Failed to disable user");
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message + ex.StackTrace);
             }
