@@ -12,7 +12,7 @@
         <span>Activity</span>
       </el-menu-item>
     </router-link>
-    <router-link to="/user">
+    <router-link to="/user" v-if="user.roleLevel == 1">
       <el-menu-item index="/user"
         ><i class="bi bi-people-fill me-2"></i>
         <span>User</span>
@@ -24,11 +24,16 @@
 export default {
   data() {
     return {
+      user: {},
       activeLink: '',
     }
   },
   mounted() {
     this.activeLink = this.$route.path
+    this.user = JSON.parse(localStorage.getItem('user'))
+    if (this.user == null) {
+      window.location.replace('/')
+    }
   },
 }
 </script>
@@ -40,5 +45,8 @@ export default {
 a {
   color: inherit;
   text-decoration: none !important;
+}
+.el-menu-item {
+  color: #6c6e72;
 }
 </style>

@@ -33,21 +33,11 @@ namespace TimeTracker.Api.Logics
             var statusLog = await _context.StatusLogs.OrderByDescending(x => x.DateTimeCreated).FirstOrDefaultAsync(x => x.RecordId == dto.RecordId);
             int success = 0;
 
-            if (dto.StatusName == "Pause")
+            if (dto.StatusName == "Pause" || dto.StatusName == "Complete")
             {
                 record.CurrentRunningTime = dto.CurrentRunningTime;
                 _context.Records.Update(record);
                 await _context.SaveChangesAsync();
-            }
-
-            if (dto.StatusName == "Complete")
-            {
-                if (statusLog.Name == "Start" || statusLog.Name == "Resume")
-                {
-                    record.CurrentRunningTime = dto.CurrentRunningTime;
-                    _context.Records.Update(record);
-                    await _context.SaveChangesAsync();
-                }
             }
 
             var status = new StatusLog();

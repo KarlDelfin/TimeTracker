@@ -56,7 +56,6 @@ export default {
   methods: {},
   mounted() {
     this.user = JSON.parse(localStorage.getItem('user'))
-    console.log(this.user)
     if (this.user == null) {
       window.location.replace('/')
     }

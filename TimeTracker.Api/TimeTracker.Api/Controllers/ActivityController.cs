@@ -15,11 +15,11 @@ namespace TimeTracker.Api.Controllers
         }
 
         [HttpGet("User/{userId}")]
-        public async Task<IActionResult> GetActivityByUserId(Guid userId, [FromQuery] PaginationRequest paginationRequest, [FromQuery] string? search = "")
+        public async Task<IActionResult> GetActivityByUserId(Guid userId, [FromQuery] PaginationRequest paginationRequest, [FromQuery] string? search = "", [FromQuery] bool isFiltered = false)
         {
             try
             {
-                var data = await _logic.GetActivityByUserId(userId, search);
+                var data = await _logic.GetActivityByUserId(userId, search, isFiltered);
                 var pagination = PaginationLogic.PaginateData(data, paginationRequest);
                 return Ok(pagination);
             }

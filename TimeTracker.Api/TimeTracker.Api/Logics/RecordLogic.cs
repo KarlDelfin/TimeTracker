@@ -18,10 +18,15 @@ namespace TimeTracker.Api.Logics
             var data = await (from r in _context.Records
                               join a in _context.Activities on r.ActivityId equals a.ActivityId
                               where r.UserId == userId
+                              
                               let currentStatus = (from sl in _context.StatusLogs
                                                    where r.RecordId == sl.RecordId
                                                    orderby sl.DateTimeCreated descending
                                                    select new { sl }).FirstOrDefault()
+                              let previousStatus = (from sl in _context.StatusLogs
+                                                    where r.RecordId == sl.RecordId && sl.DateTimeCreated < currentStatus.sl.DateTimeCreated
+                                                    orderby sl.DateTimeCreated descending
+                                                    select new { sl }).FirstOrDefault()
                               orderby r.DateTimeCreated descending
                               select new RecordDTO_GET
                               {
@@ -32,7 +37,8 @@ namespace TimeTracker.Api.Logics
                                   ActivityEstimatedTime = a.EstimatedTime,
                                   CurrentRunningTime = r.CurrentRunningTime,
                                   DateTimeCreated = r.DateTimeCreated,
-                                  RecordStatusName = currentStatus.sl.Name
+                                  CurrentStatus = currentStatus.sl.Name,
+                                  PreviousStatus = previousStatus.sl.Name,
                               }).ToListAsync();
             if (!string.IsNullOrEmpty(search))
             {

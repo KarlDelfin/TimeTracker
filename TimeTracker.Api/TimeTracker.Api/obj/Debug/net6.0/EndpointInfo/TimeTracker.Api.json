@@ -45,6 +45,14 @@
               "type": "string",
               "default": ""
             }
+          },
+          {
+            "name": "isFiltered",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           }
         ],
         "responses": {

@@ -9,7 +9,8 @@
         public int ActivityEstimatedTime { get; set; }
         public float? CurrentRunningTime { get; set; }
         public DateTime DateTimeCreated { get; set; }
-        public string RecordStatusName { get; set; }
+        public string CurrentStatus { get; set; }
+        public string PreviousStatus { get; set; }
     }
 
     public class RecordDTO_POST

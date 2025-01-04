@@ -14,26 +14,50 @@ namespace TimeTracker.Api.Logics
             _context = context;
         }
 
-        public async Task<List<ActivityDTO_GET>> GetActivityByUserId(Guid userId, string? search = "")
+        public async Task<List<ActivityDTO_GET>> GetActivityByUserId(Guid userId, string? search = "", bool isFiltered = false)
         {
-            var data = await (from a in _context.Activities
-                              where a.UserId == userId
-                              orderby a.DateTimeCreated descending
-                              select new ActivityDTO_GET
-                              {
-                                  ActivityId = a.ActivityId,
-                                  UserId = userId,
-                                  ActivityName = a.Name,
-                                  ActivityDescription = a.Description,
-                                  ActivityEstimatedTime = a.EstimatedTime,
-                                  
-                              }).ToListAsync();
-            if (!string.IsNullOrEmpty(search))
+            if (isFiltered)
             {
-                data = data.Where(x=>x.ActivityName.Contains(search)).ToList();
+                var data = await (from a in _context.Activities
+                                  where a.UserId == userId && a.IsAssigned == false
+                                  orderby a.DateTimeCreated descending
+                                  select new ActivityDTO_GET
+                                  {
+                                      ActivityId = a.ActivityId,
+                                      UserId = userId,
+                                      ActivityName = a.Name,
+                                      ActivityDescription = a.Description,
+                                      ActivityEstimatedTime = a.EstimatedTime,
+
+                                  }).ToListAsync();
+                if (!string.IsNullOrEmpty(search))
+                {
+                    data = data.Where(x => x.ActivityName.Contains(search)).ToList();
+                    return data;
+                }
                 return data;
             }
-            return data;
+            else
+            {
+                var data = await (from a in _context.Activities
+                                  where a.UserId == userId
+                                  orderby a.DateTimeCreated descending
+                                  select new ActivityDTO_GET
+                                  {
+                                      ActivityId = a.ActivityId,
+                                      UserId = userId,
+                                      ActivityName = a.Name,
+                                      ActivityDescription = a.Description,
+                                      ActivityEstimatedTime = a.EstimatedTime,
+
+                                  }).ToListAsync();
+                if (!string.IsNullOrEmpty(search))
+                {
+                    data = data.Where(x => x.ActivityName.Contains(search)).ToList();
+                    return data;
+                }
+                return data;
+            }
         }
 
         public async Task<bool> AddActivity(ActivityDTO_POST dto)

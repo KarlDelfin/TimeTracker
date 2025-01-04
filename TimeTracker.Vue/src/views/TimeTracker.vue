@@ -6,19 +6,20 @@
       <div class="d-flex justify-content-end mb-2">
         <el-button type="primary" @click="openForm('Add Record')">Add Record</el-button>
       </div>
-      <el-collapse accordion>
-        <el-collapse-item title="Filter Results" name="1">
-          <el-form>
-            <el-input placeholder="Search Activity" />
-            <div class="d-flex justify-content-end mt-2">
-              <el-button> Reset </el-button>
-              <el-button type="primary"> Apply </el-button>
-            </div>
-          </el-form>
-        </el-collapse-item>
-      </el-collapse>
       <el-scrollbar height="500px">
-        <el-table :data="records">
+        <el-collapse accordion>
+          <el-collapse-item title="Filter Results" name="1">
+            <el-form @submit.prevent="getRecordByUserId()">
+              <el-input placeholder="Search Record" v-model="search" />
+              <div class="d-flex justify-content-end mt-2">
+                <el-button @click="(clear(), getRecordByUserId())"> Reset </el-button>
+                <el-button type="primary" @click="getRecordByUserId()"> Apply </el-button>
+              </div>
+            </el-form>
+          </el-collapse-item>
+        </el-collapse>
+
+        <el-table :data="records" :row-class-name="tableRowClassName">
           <el-table-column label="Elapsed Time" prop="currentRunningTime">
             <template #default="scope">
               <span class="border p-2 rounded">
@@ -36,19 +37,19 @@
           </el-table-column>
           <el-table-column label="Status" prop="status">
             <template #default="scope">
-              <div v-if="scope.row.recordStatusName == 'Start'">
+              <div v-if="scope.row.currentStatus == 'Start'">
                 <el-tag type="primary">Started</el-tag>
               </div>
-              <div v-else-if="scope.row.recordStatusName == 'Resume'">
+              <div v-else-if="scope.row.currentStatus == 'Resume'">
                 <el-tag type="primary">Resumed</el-tag>
               </div>
-              <div v-else-if="scope.row.recordStatusName == 'Pause'">
+              <div v-else-if="scope.row.currentStatus == 'Pause'">
                 <el-tag type="warning">Paused</el-tag>
               </div>
-              <div v-else-if="scope.row.recordStatusName == 'Complete'">
+              <div v-else-if="scope.row.currentStatus == 'Complete'">
                 <el-tag type="success">Completed</el-tag>
               </div>
-              <div v-else-if="scope.row.recordStatusName == 'Reassign'">
+              <div v-else-if="scope.row.currentStatus == 'Reassign'">
                 <el-tag type="info">Reassigned</el-tag>
               </div>
               <div v-else>
@@ -59,81 +60,118 @@
           <el-table-column label="Operation" align="center">
             <template #default="scope">
               <!-- START [START] -->
-              <el-popconfirm
-                hide-icon
-                width="250px"
-                title="Do you want to start this Activity?"
-                confirmButtonText="Yes"
-                cancelButtonText="No"
-                @confirm="updateStatus(scope.row.recordId, 'Start', scope.row.currentRunningTime)"
-                @cancel="getRecordByUserId()"
-              >
-                <template #reference>
-                  <el-button
-                    :style="
-                      scope.row.recordStatusName == 'Start' ? 'border: 1px solid #409EFF' : ''
-                    "
-                    :disabled="
-                      scope.row.recordStatusName == 'Start' ||
-                      scope.row.recordStatusName == 'Complete' ||
-                      activeRowId != null
-                    "
-                    size="small"
-                    ><i class="bi bi-play-fill"></i></el-button
-                ></template>
-              </el-popconfirm>
+              <span class="mx-1" v-if="scope.row.currentStatus == null">
+                <el-popconfirm
+                  hide-icon
+                  width="250px"
+                  title="Do you want to start this Activity?"
+                  confirmButtonText="Yes"
+                  cancelButtonText="No"
+                  @confirm="updateStatus(scope.row.recordId, 'Start', scope.row.currentRunningTime)"
+                  @cancel="getRecordByUserId()"
+                >
+                  <template #reference>
+                    <el-button
+                      :style="scope.row.currentStatus == 'Start' ? 'border: 1px solid #409EFF' : ''"
+                      :disabled="
+                        scope.row.currentStatus == 'Start' ||
+                        scope.row.currentStatus == 'Complete' ||
+                        activeRowId != null
+                      "
+                      size="small"
+                      ><i class="bi bi-play-fill"></i></el-button
+                  ></template>
+                </el-popconfirm>
+              </span>
               <!-- END [START] -->
 
+              <!-- START [RESUME] -->
+              <span class="mx-1" v-else>
+                <el-popconfirm
+                  hide-icon
+                  width="250px"
+                  title="Do you want to resume this Activity?"
+                  confirmButtonText="Yes"
+                  cancelButtonText="No"
+                  @confirm="
+                    updateStatus(scope.row.recordId, 'Resume', scope.row.currentRunningTime)
+                  "
+                  @cancel="getRecordByUserId()"
+                >
+                  <template #reference>
+                    <el-button
+                      :style="
+                        scope.row.currentStatus == 'Resume' || scope.row.currentStatus == 'Start'
+                          ? 'border: 1px solid #409EFF'
+                          : ''
+                      "
+                      :disabled="
+                        scope.row.currentStatus == 'Start' ||
+                        scope.row.currentStatus == 'Complete' ||
+                        activeRowId != null
+                      "
+                      size="small"
+                      ><i class="bi bi-play-fill"></i></el-button
+                  ></template>
+                </el-popconfirm>
+              </span>
+
+              <!-- END [RESUME] -->
+
               <!-- START [PAUSE] -->
-              <el-button
-                :style="
-                  scope.row.recordStatusName == 'Pause' || scope.row.recordStatusName == null
-                    ? 'border: 1px solid #E6A23C'
-                    : ''
-                "
-                :disabled="
-                  scope.row.recordStatusName == 'Pause' ||
-                  scope.row.recordStatusName == null ||
-                  scope.row.recordStatusName == 'Complete'
-                "
-                size="small"
-                @click="updateStatus(scope.row.recordId, 'Pause', scope.row.currentRunningTime)"
-                ><i class="bi bi-pause-fill"></i
-              ></el-button>
+              <span class="mx-1">
+                <el-button
+                  :style="
+                    scope.row.currentStatus == 'Pause' || scope.row.currentStatus == null
+                      ? 'border: 1px solid #E6A23C'
+                      : ''
+                  "
+                  :disabled="
+                    scope.row.currentStatus == 'Pause' ||
+                    scope.row.currentStatus == null ||
+                    scope.row.currentStatus == 'Complete'
+                  "
+                  size="small"
+                  @click="updateStatus(scope.row.recordId, 'Pause', scope.row.currentRunningTime)"
+                  ><i class="bi bi-pause-fill"></i
+                ></el-button>
+              </span>
               <!-- END [PAUSE] -->
 
               <!-- START [COMPLETE] -->
-              <el-popconfirm
-                hide-icon
-                width="250px"
-                title="Do you want to complete this Activity?"
-                confirmButtonText="Yes"
-                cancelButtonText="No"
-                @confirm="
-                  updateStatus(scope.row.recordId, 'Complete', scope.row.currentRunningTime)
-                "
-                @cancel="getRecordByUserId()"
-              >
-                <template #reference>
-                  <el-button
-                    :style="
-                      scope.row.recordStatusName == 'Complete' ? 'border: 1px solid #67C23A' : ''
-                    "
-                    :disabled="
-                      scope.row.recordStatusName == 'Complete' ||
-                      scope.row.recordStatusName == null ||
-                      scope.row.recordStatusName == 'Reassign'
-                    "
-                    size="small"
-                    ><span>Complete</span></el-button
-                  >
-                </template>
-              </el-popconfirm>
+              <span class="mx-1">
+                <el-popconfirm
+                  hide-icon
+                  width="250px"
+                  title="Do you want to complete this Activity?"
+                  confirmButtonText="Yes"
+                  cancelButtonText="No"
+                  @confirm="
+                    updateStatus(scope.row.recordId, 'Complete', scope.row.currentRunningTime)
+                  "
+                  @cancel="getRecordByUserId()"
+                >
+                  <template #reference>
+                    <el-button
+                      :style="
+                        scope.row.currentStatus == 'Complete' ? 'border: 1px solid #67C23A' : ''
+                      "
+                      :disabled="
+                        scope.row.currentStatus == 'Complete' ||
+                        scope.row.currentStatus == null ||
+                        scope.row.currentStatus == 'Reassign'
+                      "
+                      size="small"
+                      ><span>Complete</span></el-button
+                    >
+                  </template>
+                </el-popconfirm>
+              </span>
               <!-- END [COMPLETE] -->
 
               <!-- START [REMOVE] -->
               <el-button
-                v-if="scope.row.recordStatusName == null"
+                v-if="scope.row.currentStatus == null"
                 type="danger"
                 size="small"
                 @click="deleteRecord(scope.row.recordId)"
@@ -180,6 +218,19 @@
               filterable
             >
               <el-option
+                v-show="true"
+                v-for="activity in filterActivity"
+                :key="activity.activityId"
+                :label="`${activity.activityName} - ${
+                  activity.activityEstimatedTime > 1
+                    ? `${activity.activityEstimatedTime} hours`
+                    : `${activity.activityEstimatedTime} hour`
+                }
+                `"
+                :value="activity.activityId"
+              />
+              <el-option
+                v-show="false"
                 v-for="activity in activities"
                 :key="activity.activityId"
                 :label="`${activity.activityName} - ${
@@ -285,6 +336,7 @@ const api = import.meta.env.VITE_APP_API_URL
 export default {
   data() {
     return {
+      search: '',
       activeRowId: null,
       recordId: '',
       form: {
@@ -294,6 +346,7 @@ export default {
       },
       title: '',
       recordForm: [{ activityId: '', userId: '' }],
+      tempRecordForm: [{ activityId: '', userId: '' }],
       dialog: {
         recordForm: false,
         viewRecord: false,
@@ -320,14 +373,20 @@ export default {
     }
   },
   computed: {
-    // filterActivity() {
-    //   return this.activities.filter(
-    //     (a) => !this.recordForm.some((r) => r.activityId === a.activityId),
-    //   )
-    // },
+    filterActivity() {
+      return this.activities.filter(
+        (a) => !this.recordForm.some((r) => r.activityId === a.activityId),
+      )
+    },
   },
 
   methods: {
+    tableRowClassName({ row }) {
+      if (row.currentStatus == 'Resume' || row.currentStatus == 'Start') {
+        return 'success-row'
+      }
+      return ''
+    },
     addMore() {
       this.recordForm.push({
         activityId: '',
@@ -352,6 +411,7 @@ export default {
       })
       this.title = ''
       this.recordId = ''
+      this.search = ''
     },
 
     // OPEN FORM
@@ -374,7 +434,7 @@ export default {
 
     // DELETE RECORD
     deleteRecord(recordId) {
-      ElMessageBox.confirm('Do you want to delete this Activity?', 'Warning', {
+      ElMessageBox.confirm('Do you want to remove this Record?', 'Warning', {
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
         type: 'warning',
@@ -384,7 +444,7 @@ export default {
             .delete(`${api}/Record/${recordId}`)
             .then(() => {
               this.getRecordByUserId()
-              ElMessage.success('Record deleted successfully')
+              ElMessage.success('Record removed successfully')
             })
             .catch((error) => {
               ElMessage.error(error)
@@ -411,7 +471,7 @@ export default {
         statusName: statusName,
         currentRunningTime: currentRunningTime,
       }
-      if (statusName == 'Start') {
+      if (statusName == 'Start' || statusName == 'Resume') {
         this.activeRowId = recordId
         localStorage.setItem('elapsedTime', currentRunningTime)
       } else {
@@ -423,6 +483,8 @@ export default {
         .then(() => {
           if (statusName == 'Start') {
             ElMessage.success(`Activity has been Started`)
+          } else if (statusName == 'Resume') {
+            ElMessage.success(`Activity has been Resumed`)
           } else if (statusName == 'Pause') {
             ElMessage.success(`Activity has been Paused`)
           }
@@ -462,7 +524,7 @@ export default {
     getRecordByUserId(data) {
       if (typeof data == 'number') {
         this.records.forEach((record) => {
-          if (record.recordStatusName === 'Start') {
+          if (record.currentStatus === 'Start' || record.currentStatus === 'Resume') {
             this.updateStatus(record.recordId, 'Pause', record.currentRunningTime)
           }
         })
@@ -474,7 +536,7 @@ export default {
       })
       axios
         .get(
-          `${api}/Record/User/${this.user.userId}?currentPage=${this.recordPagination.currentPage}&elementsPerPage=${this.recordPagination.elementsPerPage}`,
+          `${api}/Record/User/${this.user.userId}?currentPage=${this.recordPagination.currentPage}&elementsPerPage=${this.recordPagination.elementsPerPage}&search=${this.search}`,
         )
         .then((response) => {
           this.records = response.data.results
@@ -487,7 +549,7 @@ export default {
     getActivityByUserId(data) {
       axios
         .get(
-          `${api}/Activity/User/${this.user.userId}?currentPage=${this.activityPagination.currentPage}&elementsPerPage=${this.activityPagination.elementsPerPage}&search=${data}`,
+          `${api}/Activity/User/${this.user.userId}?currentPage=${this.activityPagination.currentPage}&elementsPerPage=${this.activityPagination.elementsPerPage}&search=${data}&isFiltered=true`,
         )
         .then((response) => {
           this.activities = response.data.results
@@ -498,7 +560,7 @@ export default {
     // REACTIVE ELAPSE TIME
     updateElapsedTime() {
       this.records.forEach((record) => {
-        if (record.recordStatusName === 'Start') {
+        if (record.currentStatus === 'Start' || record.currentStatus == 'Resume') {
           record.currentRunningTime += 1000
           this.activeRowId = record.recordId
         }
@@ -552,7 +614,7 @@ export default {
     // IF PAGE REFRESHED PAUSE THE STARTED ACTIVITY
     refreshPage() {
       this.records.forEach((record) => {
-        if (record.recordStatusName === 'Start') {
+        if (record.currentStatus === 'Start' || record.currentStatus == 'Resume') {
           this.updateStatus(record.recordId, 'Pause', record.currentRunningTime)
         }
       })
@@ -570,7 +632,7 @@ export default {
   beforeUnmount() {
     // IF PAGE IS CHANGED  PAUSE THE STARTED ACTIVITY
     this.records.forEach((record) => {
-      if (record.recordStatusName === 'Start') {
+      if (record.currentStatus === 'Start') {
         this.updateStatus(record.recordId, 'Pause', record.currentRunningTime)
       }
     })
@@ -583,5 +645,11 @@ export default {
   min-height: 70vh;
   max-height: calc(92vh - 32px);
   overflow: hidden;
+}
+.el-table .warning-row {
+  --el-table-tr-bg-color: var(--el-color-warning-light-9);
+}
+.el-table .success-row {
+  --el-table-tr-bg-color: var(--el-color-success-light-9);
 }
 </style>

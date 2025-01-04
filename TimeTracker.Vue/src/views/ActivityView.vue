@@ -3,11 +3,23 @@
     <el-card class="menuCard">
       <h4>Activity</h4>
 
-      <div class="d-flex justify-content-end">
+      <div class="d-flex justify-content-end mb-2">
         <el-button type="primary" @click="openForm('Create Activity')">Create Activity</el-button>
       </div>
 
-      <el-scrollbar height="450px">
+      <el-scrollbar height="500px">
+        <el-collapse accordion>
+          <el-collapse-item title="Filter Results" name="1">
+            <el-form @submit.prevent="getActivityByUserId">
+              <el-input placeholder="Search Activity" v-model="search" />
+              <div class="d-flex justify-content-end mt-2">
+                <el-button @click="(clear(), getActivityByUserId())"> Reset </el-button>
+                <el-button type="primary" @click="getActivityByUserId"> Apply </el-button>
+              </div>
+            </el-form>
+          </el-collapse-item>
+        </el-collapse>
+
         <el-table :data="activities">
           <el-table-column label="Name" prop="activityName" />
           <el-table-column label="Description" prop="activityDescription" />
@@ -73,6 +85,7 @@ const api = import.meta.env.VITE_APP_API_URL
 export default {
   data() {
     return {
+      search: '',
       activityId: '',
       title: '',
       user: {},
@@ -102,7 +115,7 @@ export default {
       })
       axios
         .get(
-          `${api}/Activity/User/${this.user.userId}?currentPage=${this.activityPagination.currentPage}&elementsPerPage=${this.activityPagination.elementsPerPage}`,
+          `${api}/Activity/User/${this.user.userId}?currentPage=${this.activityPagination.currentPage}&elementsPerPage=${this.activityPagination.elementsPerPage}&search=${this.search}`,
         )
         .then((response) => {
           this.activities = response.data.results
@@ -117,6 +130,7 @@ export default {
       this.form.activityName = ''
       this.form.activityDescription = ''
       this.form.activityEstimatedTime = 1
+      this.search = ''
     },
 
     // OPEN FORM
