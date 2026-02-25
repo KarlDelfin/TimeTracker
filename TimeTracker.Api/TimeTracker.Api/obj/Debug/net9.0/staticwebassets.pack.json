@@ -1,0 +1,33 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Passion Projects\\TimeTracker\\TimeTracker.Api\\TimeTracker.Api\\wwwroot\\Images\\User\\29d06ae0-87b2-4d43-b5e7-a1133d5e74cf.jpg",
+      "PackagePath": "staticwebassets\\Images\\User\\29d06ae0-87b2-4d43-b5e7-a1133d5e74cf.jpg"
+    },
+    {
+      "Id": "D:\\Passion Projects\\TimeTracker\\TimeTracker.Api\\TimeTracker.Api\\wwwroot\\Images\\User\\9dcedc68-34dc-45ec-9694-881073af110c.jpg",
+      "PackagePath": "staticwebassets\\Images\\User\\9dcedc68-34dc-45ec-9694-881073af110c.jpg"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.TimeTracker.Api.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.TimeTracker.Api.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.build.TimeTracker.Api.props",
+      "PackagePath": "build\\TimeTracker.Api.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildMultiTargeting.TimeTracker.Api.props",
+      "PackagePath": "buildMultiTargeting\\TimeTracker.Api.props"
+    },
+    {
+      "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.buildTransitive.TimeTracker.Api.props",
+      "PackagePath": "buildTransitive\\TimeTracker.Api.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
